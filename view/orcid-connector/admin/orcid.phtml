@@ -1,0 +1,12 @@
+<?php
+//this contains credentials that should not be exposed on GitHub, so it's in .gitignore
+include('devData.php');
+?>
+
+<fieldset id='orcid_data' class='section'>
+    <a id="connect-orcid-link" href="<?php echo $orcidConnectLink; ?>">
+        <img id="orcid-id-logo" src="https://orcid.org/sites/default/files/images/orcid_16x16.png" width='16' height='16' alt="ORCID logo"/>
+        <?php echo $this->translate('Create or Connect your ORCID iD'); ?>
+    </a>
+    <?php echo $orcidConnectLink; ?>
+</fieldset>

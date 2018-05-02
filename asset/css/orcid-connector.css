@@ -1,0 +1,15 @@
+a#connect-orcid-link{
+    cursor: pointer;
+    color: #999;
+}
+
+a#connect-orcid-link:hover{
+    color: #338caf;
+}
+
+#orcid-id-logo{
+    display: block;
+    margin: 0 .5em 0 0;
+    padding: 0;
+    float: left;
+}

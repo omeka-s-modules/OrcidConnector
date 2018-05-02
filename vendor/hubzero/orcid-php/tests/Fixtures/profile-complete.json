@@ -1,0 +1,162 @@
+{
+    "orcid-identifier" : {
+        "uri" : "http://orcid.org/0000-0000-0000-0000",
+        "path" : "0000-0000-0000-0000",
+        "host" : "orcid.org"
+    },
+    "orcid-deprecated" : null,
+    "preferences" : {
+        "locale" : "EN"
+    },
+    "history" : {
+        "creation-method" : "DIRECT",
+        "completion-date" : null,
+        "submission-date" : {
+            "value" : 1435781105161
+        },
+        "last-modified-date" : {
+            "value" : 1442425371236
+        },
+        "claimed" : {
+            "value" : true
+        },
+        "source" : null,
+        "deactivation-date" : null,
+        "verified-email" : true,
+        "verified-primary-email" : true
+    },
+    "person" : {
+        "last-modified-date": 1442425371236,
+        "name" : {
+            "last-modified-date": {
+                "value": 1442425371236
+            },
+            "given-names" : {
+                "value" : "Test"
+            },
+            "family-name" : {
+                "value" : "User"
+            },
+            "credit-name" : {
+                "value" : "Test User"
+            },
+            "source": null,
+            "visibility" : "PUBLIC",
+            "path": "0000-0000-0000-0000"
+        },
+        "other-names" : {
+            "last-modified-date": {
+                "value": 1442425371236
+            },
+            "other-name" : [ ],
+            "path": "/0000-0000-0000-0000/other-names"
+        },
+        "biography" : {
+            "last-modified-date": {
+                "value": 1442425371236
+            },
+            "content" : "Cras justo odio, dapibus ac facilisis in, egestas eget quam. Maecenas faucibus mollis interdum.",
+            "visibility" : "PUBLIC",
+            "path": "/0000-0000-0000-0000/biography"
+        },
+        "researcher-urls" : {
+            "last-modified-date": null,
+            "researcher-url" : [ ],
+            "path": "/0000-0000-0000-0000/researcher-urls"
+        },
+        "emails": {
+            "last-modified-date": {
+                "value": 1442425371236
+            },
+            "email" : [ {
+                "value" : "testuser@gmail.com",
+                "primary" : true,
+                "current" : true,
+                "verified" : true,
+                "visibility" : "PUBLIC",
+                "source" : "0000-0000-0000-0000",
+                "source-client-id" : null
+            } ],
+            "path": "/0000-0000-0000-0000/emails"
+        },
+        "addresses": {
+            "last-modified-date": null,
+            "address" : [ ],
+            "path": "/0000-0000-0000-0000/addresses"
+        },
+        "keywords" : null,
+        "external-identifiers" : {
+            "last-modified-date": null,
+            "external-identifier" : [ ],
+            "visibility" : "PUBLIC",
+            "path": "/0000-0000-0000-0000/external-identifiers"
+        },
+        "delegation" : null,
+        "applications" : null,
+        "scope" : null,
+        "path": "/0000-0000-0000-0000/person"
+    },
+    "activities-summary" : {
+        "affiliations" : {
+            "affiliation" : [ {
+                "type" : "EMPLOYMENT",
+                "department-name" : "Information Technology at Purdue",
+                "role-title" : "Software Engineer",
+                "start-date" : {
+                    "year" : {
+                        "value" : "2012"
+                    },
+                    "month" : {
+                        "value" : "10"
+                    },
+                    "day" : {
+                        "value" : "01"
+                    }
+                },
+                "end-date" : null,
+                "organization" : {
+                    "name" : "Purdue University",
+                    "address" : {
+                        "city" : "West Lafayette",
+                        "region" : "IN",
+                        "country" : "US"
+                    },
+                    "disambiguated-organization" : {
+                        "disambiguated-organization-identifier" : "311308",
+                        "disambiguation-source" : "RINGGOLD"
+                    }
+                },
+                "source" : {
+                    "source-orcid" : {
+                        "value" : null,
+                        "uri" : "http://orcid.org/0000-0000-0000-0000",
+                        "path" : "0000-0000-0000-0000",
+                        "host" : "orcid.org"
+                    },
+                    "source-client-id" : null,
+                    "source-name" : {
+                        "value" : "Test User"
+                    },
+                    "source-date" : {
+                        "value" : 1435781249511
+                    }
+                },
+                "created-date" : {
+                    "value" : 1435781249511
+                },
+                "last-modified-date" : {
+                    "value" : 1435781261197
+                },
+                "visibility" : "PUBLIC",
+                "put-code" : "1002942"
+            } ]
+        },
+        "orcid-works" : null,
+        "funding-list" : null,
+        "path": "/0000-0000-0000-0000/activities"
+    },
+    "orcid-internal" : null,
+    "type" : "USER",
+    "group-type" : null,
+    "client-type" : null
+}
