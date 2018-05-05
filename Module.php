@@ -3,6 +3,9 @@
 namespace OrcidConnector;
 
 use Omeka\Module\AbstractModule;
+use OrcidConnector\Form\ConfigForm;
+use Zend\View\Renderer\PhpRenderer;
+use Zend\Mvc\Controller\AbstractController;
 use Zend\EventManager\SharedEventManagerInterface;
 
 class Module extends AbstractModule
@@ -54,4 +57,30 @@ class Module extends AbstractModule
             []
         );
     }
+    
+    /**
+     * Get this module's configuration form.
+     *
+     * @param ViewModel $view
+     * @return string
+     */
+    public function getConfigForm(PhpRenderer $renderer)
+    {
+        $formElementManager = $this->getServiceLocator()->get('FormElementManager');
+        $form = $formElementManager->get(ConfigForm::class);
+        $html = $renderer->formCollection($form);
+        return $html;
+    }
+    
+    /**
+     * Handle this module's configuration form.
+     *
+     * @param AbstractController $controller
+     * @return bool False if there was an error during handling
+     */
+    public function handleConfigForm(AbstractController $controller)
+    {
+        $data = $controller->params()->fromPost();
+    }
+
 }
