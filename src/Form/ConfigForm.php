@@ -63,20 +63,5 @@ class ConfigForm extends Form
 
         ]);
     }
-
-    protected function setOrcidRedirectUri($redirectUri)
-    {
-        $this->orcidRedirectUri = $redirectUri;
-    }
-
-    protected function setOrcidClientId($clientId)
-    {
-        $this->orcidClientId = $clientId;
-    }
-
-    protected function setOrcidClientSecret($secret)
-    {
-        $this->orcidClientSecret = $secret;
-    }
 }
 
