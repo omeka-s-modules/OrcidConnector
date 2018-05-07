@@ -53,8 +53,13 @@ class Module extends AbstractModule
     public function orcidForm($event)
     {
         $view = $event->getTarget();
+        $globals = $this->getServiceLocator()->get('Omeka\Settings');
         echo $view->partial('orcid-connector/admin/orcid',
-            []
+            [
+                'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
+                'orcid_client_id'     => $globals->get('orcid_client_id', ''),
+                'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
+            ]
         );
     }
 

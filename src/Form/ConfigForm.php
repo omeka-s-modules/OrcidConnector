@@ -18,10 +18,11 @@ class ConfigForm extends Form
             'type' => '',
             'name' => '',
             'attributes' => [
-                'label' => '',
-                'info' => '',
+                'value' => '',
             ],
             'options' => [
+                'label' => '',
+                'info' => '',
             ],
 
         ]);
