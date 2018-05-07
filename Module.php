@@ -57,7 +57,7 @@ class Module extends AbstractModule
             []
         );
     }
-    
+
     /**
      * Get this module's configuration form.
      *
@@ -67,11 +67,17 @@ class Module extends AbstractModule
     public function getConfigForm(PhpRenderer $renderer)
     {
         $formElementManager = $this->getServiceLocator()->get('FormElementManager');
+        $globals = $this->getServiceLocator()->get('Omeka\Settings');
         $form = $formElementManager->get(ConfigForm::class);
+        $form->setData([
+            'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
+            'orcid_client_id'     => $globals->get('orcid_client_id', ''),
+            'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
+        ]);
         $html = $renderer->formCollection($form);
         return $html;
     }
-    
+
     /**
      * Handle this module's configuration form.
      *
@@ -81,6 +87,17 @@ class Module extends AbstractModule
     public function handleConfigForm(AbstractController $controller)
     {
         $data = $controller->params()->fromPost();
-    }
+        $globalSettings = $this->getServiceLocator()->get('Omeka\Settings');
+        if (isset($data['orcid_redirect_uri'])) {
+            $globalSettings->set('orcid_redirect_uri', $data['orcid_redirect_uri']);
+        }
 
+        if (isset($data['orcid_client_id'])) {
+            $globalSettings->set('orcid_client_id', $data['orcid_client_id']);
+        }
+
+        if (isset($data['orcid_client_secret'])) {
+            $globalSettings->set('orcid_client_secret', $data['orcid_client_secret']);
+        }
+    }
 }

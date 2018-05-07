@@ -5,7 +5,12 @@ use Zend\Form\Form;
 
 class ConfigForm extends Form
 {
-    
+    protected $orcidRedirectUri;
+
+    protected $orcidClientId;
+
+    protected $orcidClientSecret;
+
     public function init()
     {
         /*
@@ -25,7 +30,7 @@ class ConfigForm extends Form
             'type' => 'text',
             'name' => 'orcid_redirect_uri',
             'attributes' => [
-
+                'value' => $this->orcidClientId,
             ],
             'options' => [
                 'label' => 'Redirect URI', // @translate
@@ -37,7 +42,7 @@ class ConfigForm extends Form
             'type' => 'text',
             'name' => 'orcid_client_id',
             'attributes' => [
-
+                'value' => $this->orcidClientId,
             ],
             'options' => [
                 'label' => 'Client Id', // @translate
@@ -49,7 +54,7 @@ class ConfigForm extends Form
             'type' => 'text',
             'name' => 'orcid_client_secret',
             'attributes' => [
-
+                'value' => $this->orcidClientSecret,
             ],
             'options' => [
                 'label' => 'Client Secret', // @translate
@@ -57,6 +62,21 @@ class ConfigForm extends Form
             ],
 
         ]);
+    }
+
+    protected function setOrcidRedirectUri($redirectUri)
+    {
+        $this->orcidRedirectUri = $redirectUri;
+    }
+
+    protected function setOrcidClientId($clientId)
+    {
+        $this->orcidClientId = $clientId;
+    }
+
+    protected function setOrcidClientSecret($secret)
+    {
+        $this->orcidClientSecret = $secret;
     }
 }
 
