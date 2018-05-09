@@ -75,9 +75,10 @@ class Module extends AbstractModule
         $globals = $this->getServiceLocator()->get('Omeka\Settings');
         $form = $formElementManager->get(ConfigForm::class);
         $form->setData([
-            'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
-            'orcid_client_id'     => $globals->get('orcid_client_id', ''),
-            'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
+            'orcid_redirect_uri'     => $globals->get('orcid_redirect_uri', ''),
+            'orcid_client_id'        => $globals->get('orcid_client_id', ''),
+            'orcid_client_secret'    => $globals->get('orcid_client_secret', ''),
+            'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
         ]);
         $html = $renderer->formCollection($form);
         return $html;
@@ -103,6 +104,10 @@ class Module extends AbstractModule
 
         if (isset($data['orcid_client_secret'])) {
             $globalSettings->set('orcid_client_secret', $data['orcid_client_secret']);
+        }
+        
+        if (isset($data['orcid_sample_client_id'])) {
+            $globalSettings->set('orcid_sample_client_id', $data['orcid_sample_client_id']);
         }
     }
 }

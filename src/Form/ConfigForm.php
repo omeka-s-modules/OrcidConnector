@@ -11,6 +11,8 @@ class ConfigForm extends Form
 
     protected $orcidClientSecret;
 
+    protected $orcidSampleClientId;
+
     public function init()
     {
         /*
@@ -62,6 +64,18 @@ class ConfigForm extends Form
                 'info' => 'The secret code ORCID gave you when registering', // @translate
             ],
 
+        ]);
+
+        $this->add([
+            'type' => 'text',
+            'name' => 'orcid_sample_client_id',
+            'attributes' => [
+                'value' => $this->orcidSampleClientId,
+            ],
+            'options' => [
+                'label' => 'Sample client id',
+                'info' => '',
+            ],
         ]);
     }
 }
