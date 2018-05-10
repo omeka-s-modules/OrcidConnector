@@ -59,6 +59,7 @@ class Module extends AbstractModule
                 'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
                 'orcid_client_id'     => $globals->get('orcid_client_id', ''),
                 'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
+                'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
             ]
         );
     }

@@ -17,8 +17,8 @@ return [
         ],
     ],
     'controllers' => [
-        'invokables' => [
-            'OrcidConnector\Controller\Index' => Controller\IndexController::class,
+        'factories' => [
+            'OrcidConnector\Controller\Index' => Service\Controller\IndexControllerFactory::class,
         ],
     ],
     'router' => [
