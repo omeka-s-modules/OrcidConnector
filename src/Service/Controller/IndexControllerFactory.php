@@ -11,7 +11,7 @@ class IndexControllerFactory implements FactoryInterface
     {
         $globalSettings = $serviceLocator->get('Omeka\Settings');
         $redirectUri = $globalSettings->get('orcid_redirect_uri');
-        $clientId = $globalSettings->get('omeka_client_id');
+        $clientId = $globalSettings->get('orcid_client_id');
         $clientSecret = $globalSettings->get('orcid_client_secret');
         $indexController = new IndexController;
         $indexController->setOrcidRedirectUri($redirectUri);

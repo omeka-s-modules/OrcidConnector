@@ -5,11 +5,16 @@ namespace OrcidConnector;
 use Omeka\Module\AbstractModule;
 use OrcidConnector\Form\ConfigForm;
 use Zend\View\Renderer\PhpRenderer;
+use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\EventManager\SharedEventManagerInterface;
 
 class Module extends AbstractModule
 {
+    public function init(ModuleManager $moduleManager)
+    {
+        require_once __DIR__ . '/vendor/autoload.php';
+    }
 
     public function getConfig()
     {
