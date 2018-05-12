@@ -26,14 +26,14 @@ class OrcidResearcher extends AbstractEntity
     protected $personItem;
 
     /**
-     * @Column(type="integer")
+     * @Column(type="integer" unique='true' nullable=false)
      * @ManyToOne(targetEntity="Omeka\Entity\User")
      * @JoinColumn(nullable=false)
      */
     protected $userId;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string" unique='true' nullable=false)
      */
     protected $accessToken;
 
@@ -43,7 +43,7 @@ class OrcidResearcher extends AbstractEntity
     protected $refreshTokens;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string" nullable=false)
      */
     protected $scope;
 
