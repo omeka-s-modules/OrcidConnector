@@ -4,7 +4,8 @@ namespace OrcidConnector\Entity;
 
 use Omeka\Entity\AbstractEntity;
 
-//see https://members.orcid.org/api/tutorial/get-orcid-id
+// see https://members.orcid.org/api/tutorial/get-orcid-id
+// and http://members.orcid.org/api/workflow/RIM-systems
 
 /**
  * @Entity
@@ -33,24 +34,82 @@ class OrcidResearcher extends AbstractEntity
 
     /**
      * @Column(type="string")
-     *
      */
     protected $accessToken;
 
     /**
      * @Column(type="string")
-     *
      */
-    protected $refreshToken;
+    protected $refreshTokens;
 
     /**
      * @Column(type="string")
-     *
      */
     protected $scope;
 
-    public function getId()
+    /**
+     * @Column(type="string")
+     */
+    protected $expiryToken;
+
+    public function getOrcidId()
     {
-        return $this->id;
+        return $this->orcidId;
+    }
+
+    public function setOrcidId($id)
+    {
+        $this->orcidId = $id;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    public function setAccessToken($accessToken)
+    {
+        $this->accessToken = $accessToken;
+    }
+
+    public function getAccessToken()
+    {
+        return $this->accessToken;
+    }
+
+    public function getRefreshTokens()
+    {
+        return $this->refreshTokens;
+    }
+
+    public function setRefreshTokens($refreshTokens)
+    {
+        $this->refreshTokens = $refreshTokens;
+    }
+
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+    }
+
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    public function setExpiryToken($expiryToken)
+    {
+        $this->expiryToken = $expiryToken;
+    }
+
+    public function getExpiryToken()
+    {
+        return $this->expiryToken;
     }
 }
+
