@@ -52,6 +52,10 @@ class OrcidResearcher extends AbstractEntity
      */
     protected $expiryToken;
 
+    /*
+     * getId() is part of the interface, but I want to make clear that 
+     * the Id is the Orcid iD, not an internal Omeka S id
+     */
     public function getId(){
         return $this->getOrcidId();
     }
