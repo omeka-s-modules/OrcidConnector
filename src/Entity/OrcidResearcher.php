@@ -52,6 +52,10 @@ class OrcidResearcher extends AbstractEntity
      */
     protected $expiryToken;
 
+    public function getId(){
+        return $this->getOrcidId();
+    }
+
     public function getOrcidId()
     {
         return $this->orcidId;
