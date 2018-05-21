@@ -41,9 +41,9 @@ class Module extends AbstractModule
                 person_item INT DEFAULT NULL,
                 user_id INT NOT NULL,
                 access_token VARCHAR(255) NOT NULL,
-                refresh_tokens VARCHAR(255) NOT NULL,
-                scope VARCHAR(255) NOT NULL,
-                expiry_token VARCHAR(255) NOT NULL,
+                refresh_tokens VARCHAR(255) DEFAULT NULL,
+                scope VARCHAR(255) DEFAULT NULL,
+                expiry_token VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY(orcid_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
                 ";
         $connection->exec($sql);
@@ -51,10 +51,18 @@ class Module extends AbstractModule
     public function uninstall(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
+        $globals = $this->getServiceLocator()->get('Omeka\Settings');
+
         $sql = "
                 DROP TABLE IF EXISTS orcid_researcher;
                 ";
         $connection->exec($sql);
+
+        $globals->delete('orcid_redirect_uri');
+        $globals->delete('orcid_client_id');
+        $globals->delete('orcid_client_secret');
+        $globals->delete('orcid_sample_client_id');
+
     }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
