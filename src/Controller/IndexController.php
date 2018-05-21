@@ -28,10 +28,26 @@ $oauth->useSandboxEnvironment();
             $oauth->setRedirectUri($this->orcidRedirectUri);
             $oauth->authenticate($code);
 // dev/testing
+$serializedOauth = serialize($oauth);
+file_put_contents('/var/www/html/omekas/modules/OrcidConnector/dev/oauth.php', $serializedOauth);
 $profile = $oauth->getProfile();
+
+$serializedProfile = serialize($profile);
+file_put_contents('/var/www/html/omekas/modules/OrcidConnector/dev/profile.php', $serializedProfile);
+
+
+
 $view->setVariable('profile', $profile);
+$view->setVariable('oauth', $oauth);
 //
             $view->setVariable('code', $code);
+        } else {
+            $serializedOauth = file_get_contents('/var/www/html/omekas/modules/OrcidConnector/dev/oauth.php');
+            $oauth = unserialize($serializedOauth);
+            $serializedProfile = file_get_contents('/var/www/html/omekas/modules/OrcidConnector/dev/profile.php');
+            $profile = unserialize($serializedProfile);
+            $view->setVariable('profile', $profile);
+            $view->setVariable('oauth', $oauth);
         }
         return $view;
     }

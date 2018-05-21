@@ -19,21 +19,21 @@ class OrcidResearcher extends AbstractEntity
     protected $orcidId;
 
     /**
-     * @Column(type="integer")
-     * @ManyToOne(targetEntity="Omeka\Entity\Item")
+     * @Column(type="integer", nullable=true)
+     * @OneToOne(targetEntity="Omeka\Entity\Item")
      * @JoinColumn(nullable=false)
      */
     protected $personItem;
 
     /**
-     * @Column(type="integer" unique='true' nullable=false)
-     * @ManyToOne(targetEntity="Omeka\Entity\User")
+     * @Column(type="integer")
+     * @OneToOne(targetEntity="Omeka\Entity\User")
      * @JoinColumn(nullable=false)
      */
     protected $userId;
 
     /**
-     * @Column(type="string" unique='true' nullable=false)
+     * @Column(type="string")
      */
     protected $accessToken;
 
@@ -43,7 +43,7 @@ class OrcidResearcher extends AbstractEntity
     protected $refreshTokens;
 
     /**
-     * @Column(type="string" nullable=false)
+     * @Column(type="string")
      */
     protected $scope;
 
@@ -120,4 +120,3 @@ class OrcidResearcher extends AbstractEntity
         return $this->expiryToken;
     }
 }
-

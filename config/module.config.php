@@ -11,6 +11,11 @@ return [
             dirname(__DIR__) . '/data/doctrine-proxies',
         ],
     ],
+    'api_adapters' => [
+        'invokables' => [
+            'orcid_researchers'   => 'OrcidConnector\Api\Adapter\OrcidResearcherAdapter',
+        ],
+    ],
     'view_manager' => [
         'template_path_stack' => [
             dirname(__DIR__) . '/view',

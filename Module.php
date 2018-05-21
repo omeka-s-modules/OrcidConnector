@@ -7,7 +7,9 @@ use OrcidConnector\Form\ConfigForm;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\Controller\AbstractController;
+use Zend\Mvc\MvcEvent;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class Module extends AbstractModule
 {
@@ -16,9 +18,43 @@ class Module extends AbstractModule
         require_once __DIR__ . '/vendor/autoload.php';
     }
 
+    public function onBootstrap(MvcEvent $event)
+    {
+        parent::onBootstrap($event);
+        $acl = $this->getServiceLocator()->get('Omeka\Acl');
+        $acl->allow(
+            null,
+            'OrcidConnector\Controller\Index'
+            );
+    }
+
     public function getConfig()
     {
         return include __DIR__.'/config/module.config.php';
+    }
+    
+    public function install(ServiceLocatorInterface $serviceLocator)
+    {
+        $connection = $serviceLocator->get('Omeka\Connection');
+        $sql = "
+                CREATE TABLE orcid_researcher (orcid_id VARCHAR(19) NOT NULL,
+                person_item INT DEFAULT NULL,
+                user_id INT NOT NULL,
+                access_token VARCHAR(255) NOT NULL,
+                refresh_tokens VARCHAR(255) NOT NULL,
+                scope VARCHAR(255) NOT NULL,
+                expiry_token VARCHAR(255) NOT NULL,
+                PRIMARY KEY(orcid_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+                ";
+        $connection->exec($sql);
+    }
+    public function uninstall(ServiceLocatorInterface $serviceLocator)
+    {
+        $connection = $serviceLocator->get('Omeka\Connection');
+        $sql = "
+                DROP TABLE IF EXISTS orcid_researcher;
+                ";
+        $connection->exec($sql);
     }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
