@@ -5,6 +5,7 @@ namespace OrcidConnector\Controller;
 use Orcid\Oauth;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use OrcidConnector\Entity\OrcidResearcher;
 
 class IndexController extends AbstractActionController
 {
@@ -16,6 +17,7 @@ class IndexController extends AbstractActionController
 
     public function authenticateAction()
     {
+        //$api = $this->getServiceLocator()->get('Omeka\ApiManager');
         $view = new ViewModel;
         $code = $this->params()->fromQuery('code', false);
         if ($code) {
@@ -48,10 +50,18 @@ $view->setVariable('oauth', $oauth);
             $profile = unserialize($serializedProfile);
             $view->setVariable('profile', $profile);
             $view->setVariable('oauth', $oauth);
+            $orcidResearcherJson = [
+                'orcid_id'       => $oauth->getOrcid(),
+                'person_item'    => null,
+                'o:user'        => ['o:id' => $this->identity()->getId()],
+                'access_token'   => $oauth->getAccessToken(),
+            ];
+
+            $response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
         }
         return $view;
     }
-    
+
     public function setOrcidClientId($id)
     {
         $this->orcidClientId = $id;

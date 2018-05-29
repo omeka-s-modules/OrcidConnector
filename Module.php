@@ -36,18 +36,26 @@ class Module extends AbstractModule
     public function install(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
+
         $sql = "
-                CREATE TABLE orcid_researcher (orcid_id VARCHAR(19) NOT NULL,
-                person_item INT DEFAULT NULL,
-                user_id INT NOT NULL,
-                access_token VARCHAR(255) NOT NULL,
-                refresh_tokens VARCHAR(255) DEFAULT NULL,
-                scope VARCHAR(255) DEFAULT NULL,
-                expiry_token VARCHAR(255) DEFAULT NULL,
-                PRIMARY KEY(orcid_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
-                ";
+                CREATE TABLE orcid_researcher (
+                    id INT AUTO_INCREMENT NOT NULL,
+                    person_item_id INT NOT NULL,
+                    user_id INT NOT NULL,
+                    orcid_id VARCHAR(255) NOT NULL,
+                    access_token VARCHAR(255) NOT NULL,
+                    refresh_tokens VARCHAR(255) DEFAULT NULL,
+                    scope VARCHAR(255) DEFAULT NULL,
+                    expiry_token VARCHAR(255) DEFAULT NULL,
+                    UNIQUE INDEX UNIQ_DA7788AC30F1E1D7 (person_item_id),
+                    UNIQUE INDEX UNIQ_DA7788ACA76ED395 (user_id),
+                    PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+                    ALTER TABLE orcid_researcher ADD CONSTRAINT FK_DA7788AC30F1E1D7 FOREIGN KEY (person_item_id) REFERENCES item (id);
+                    ALTER TABLE orcid_researcher ADD CONSTRAINT FK_DA7788ACA76ED395 FOREIGN KEY (user_id) REFERENCES user (id);
+               ";
         $connection->exec($sql);
     }
+    
     public function uninstall(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');

@@ -28,29 +28,55 @@ class OrcidResearcherAdapter extends AbstractEntityAdapter
         ErrorStore $errorStore
         ) {
             $data = $request->getContent();
-            
-            /*
-            if (isset($data['o:job']['o:id'])) {
-                $job = $this->getAdapter('jobs')->findEntity($data['o:job']['o:id']);
-                $entity->setJob($job);
+
+            if (isset($data['o:user']['o:id'])) {
+                $user = $this->getAdapter('users')->findEntity($data['o:user']['o:id']);
+                $entity->setUser($user);
             }
-            
-            
-            if (isset($data['comment'])) {
-                $entity->setComment($data['comment']);
+
+            if (isset($data['o:person_item'])) {
+                $item = $this->getAdapter('items')->findEntity($data['o:person_item']['o:id']);
+                $entity->setPersonItem($item);
             }
-            */
+
+            if (isset($data['access_token'])) {
+                $entity->setAccessToken($data['access_token']);
+            }
+
+            if (isset($data['orcid_id'])) {
+                $entity->setOrcidId($data['orcid_id']);
+            }
+
+            if (isset($data['refresh_tokens'])) {
+                $entity->setRefreshTokens($data['refresh_tokens']);
+            }
+
+            if (isset($data['expiry_token'])) {
+                $entity->setExpiryToken($data['expiry_token']);
+            }
+
+            if (isset($data['scope'])) {
+                $entity->setScope($data['scope']);
+            }
+
     }
-    
+
     public function buildQuery(QueryBuilder $qb, array $query)
     {
-        /*
-        if (isset($query['job_id'])) {
+
+        if (isset($query['item_id'])) {
             $qb->andWhere($qb->expr()->eq(
-                $this->getEntityClass() . '.job',
-                $this->createNamedParameter($qb, $query['job_id']))
+                $this->getEntityClass() . '.item',
+                $this->createNamedParameter($qb, $query['item_id']))
                 );
         }
-        */
+
+        if (isset($query['user_id'])) {
+            $qb->andWhere($qb->expr()->eq(
+                $this->getEntityClass() . '.user',
+                $this->createNamedParameter($qb, $query['user_id']))
+                );
+        }
+        
     }
 }

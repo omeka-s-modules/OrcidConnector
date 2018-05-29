@@ -12,25 +12,33 @@ use Omeka\Entity\AbstractEntity;
  */
 class OrcidResearcher extends AbstractEntity
 {
+    
     /**
      * @Id
+     * @Column(type="integer")
+     * @GeneratedValue
+     */
+    protected $id;
+
+    /**
+     * @UniqueConstraint
      * @Column(type="string")
      */
     protected $orcidId;
 
     /**
-     * @Column(type="integer", nullable=true)
+     * @UniqueConstraint
      * @OneToOne(targetEntity="Omeka\Entity\Item")
      * @JoinColumn(nullable=false)
      */
     protected $personItem;
 
     /**
-     * @Column(type="integer")
+     * @UniqueConstraint
      * @OneToOne(targetEntity="Omeka\Entity\User")
      * @JoinColumn(nullable=false)
      */
-    protected $userId;
+    protected $user;
 
     /**
      * @Column(type="string")
@@ -38,26 +46,28 @@ class OrcidResearcher extends AbstractEntity
     protected $accessToken;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string", nullable=true)
      */
     protected $refreshTokens;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string", nullable=true)
      */
     protected $scope;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string", nullable=true)
      */
     protected $expiryToken;
 
-    /*
-     * getId() is part of the interface, but I want to make clear that 
-     * the Id is the Orcid iD, not an internal Omeka S id
-     */
-    public function getId(){
-        return $this->getOrcidId();
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     public function getOrcidId()
@@ -65,21 +75,31 @@ class OrcidResearcher extends AbstractEntity
         return $this->orcidId;
     }
 
-    public function setOrcidId($id)
+    public function setOrcidId($orcidId)
     {
-        $this->orcidId = $id;
+        $this->orcidId = $orcidId;
     }
 
-    public function getUserId()
+    public function getUser()
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId($userId)
+    public function setUser($user)
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 
+    public function setPersonItem($item)
+    {
+        $this->item = $item;
+    }
+    
+    public function getPersonItem()
+    {
+        return $this->item;
+    }
+    
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;

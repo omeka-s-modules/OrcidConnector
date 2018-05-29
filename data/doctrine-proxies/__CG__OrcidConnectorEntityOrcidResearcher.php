@@ -64,10 +64,10 @@ class OrcidResearcher extends \OrcidConnector\Entity\OrcidResearcher implements 
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'orcidId', 'personItem', 'userId', 'accessToken', 'refreshTokens', 'scope', 'expiryToken'];
+            return ['__isInitialized__', 'id', 'orcidId', 'personItem', 'user', 'accessToken', 'refreshTokens', 'scope', 'expiryToken'];
         }
 
-        return ['__isInitialized__', 'orcidId', 'personItem', 'userId', 'accessToken', 'refreshTokens', 'scope', 'expiryToken'];
+        return ['__isInitialized__', 'id', 'orcidId', 'personItem', 'user', 'accessToken', 'refreshTokens', 'scope', 'expiryToken'];
     }
 
     /**
@@ -178,6 +178,10 @@ class OrcidResearcher extends \OrcidConnector\Entity\OrcidResearcher implements 
      */
     public function getId()
     {
+        if ($this->__isInitialized__ === false) {
+            return (int)  parent::getId();
+        }
+
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getId', []);
 
@@ -187,12 +191,19 @@ class OrcidResearcher extends \OrcidConnector\Entity\OrcidResearcher implements 
     /**
      * {@inheritDoc}
      */
+    public function setId($id)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setId', [$id]);
+
+        return parent::setId($id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getOrcidId()
     {
-        if ($this->__isInitialized__ === false) {
-            return  parent::getOrcidId();
-        }
-
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getOrcidId', []);
 
@@ -202,34 +213,56 @@ class OrcidResearcher extends \OrcidConnector\Entity\OrcidResearcher implements 
     /**
      * {@inheritDoc}
      */
-    public function setOrcidId($id)
+    public function setOrcidId($orcidId)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setOrcidId', [$id]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setOrcidId', [$orcidId]);
 
-        return parent::setOrcidId($id);
+        return parent::setOrcidId($orcidId);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getUserId()
+    public function getUser()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getUserId', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getUser', []);
 
-        return parent::getUserId();
+        return parent::getUser();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setUserId($userId)
+    public function setUser($user)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setUserId', [$userId]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setUser', [$user]);
 
-        return parent::setUserId($userId);
+        return parent::setUser($user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPersonItem($item)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setPersonItem', [$item]);
+
+        return parent::setPersonItem($item);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPersonItem()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getPersonItem', []);
+
+        return parent::getPersonItem();
     }
 
     /**

@@ -8,6 +8,8 @@ class OrcidResearcherRepresentation extends AbstractEntityRepresentation
     public function getJsonLd()
     {
         return [
+            'id' => $this->resource->getId(),
+            'orcid_id' => $this->resource->getOrcidId(),
             'refresh_tokens' => $this->resource->getRefreshTokens(),
             'expiry_token' => $this->resource->getExpiryToken(),
             'access_token' => $this->resource->getAccessToken(),
@@ -32,9 +34,5 @@ class OrcidResearcherRepresentation extends AbstractEntityRepresentation
     {
         return $this->getAdapter('item')->getRepresentation($this->resource->getPersonItem());
     }
-    
-    public function comment()
-    {
-        return $this->resource->getScope();
-    }
+
 }
