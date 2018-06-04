@@ -88,7 +88,7 @@ $view->setVariable('oauth', $oauth);
         $api = $this->api();
         $personClass = $api->search('resource_classes', ['term' => 'foaf:Person'])->getContent();
         
-        $itemJson = ['o:resource_class' => $personClass[0]->id(),
+        $itemJson = ['o:resource_class' => ['o:id' => $personClass[0]->id()],
                      'foaf:givenName' => [['property_id' => $this->propertyMap['foaf:givenName'],
                                           '@value' => $profile->person->name->{'given-names'}->value,
                                           'type' => 'literal'
