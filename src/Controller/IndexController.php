@@ -15,6 +15,8 @@ class IndexController extends AbstractActionController
 
     protected $orcidRedirectUri;
 
+    protected $propertyMap;
+
     public function authenticateAction()
     {
         //$api = $this->getServiceLocator()->get('Omeka\ApiManager');
@@ -58,6 +60,10 @@ $view->setVariable('oauth', $oauth);
             ];
 
             $response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
+            $this->preparePropertyMap();
+            $itemJson = $this->buildItemJson($oauth, $profile);
+            $view->setVariable('itemJson', $itemJson);
+            $this->api()->create('items', $itemJson);
         }
         return $view;
     }
@@ -66,14 +72,45 @@ $view->setVariable('oauth', $oauth);
     {
         $this->orcidClientId = $id;
     }
-    
+
     public function setOrcidClientSecret($secret)
     {
         $this->orcidClientSecret = $secret;
     }
-    
+
     public function setOrcidRedirectUri($uri)
     {
         $this->orcidRedirectUri = $uri;
+    }
+
+    protected function buildItemJson($oauth, $profile)
+    {
+        $api = $this->api();
+        $personClass = $api->search('resource_classes', ['term' => 'foaf:Person'])->getContent();
+        
+        $itemJson = ['o:resource_class' => $personClass[0]->id(),
+                     'foaf:givenName' => [['property_id' => $this->propertyMap['foaf:givenName'],
+                                          '@value' => $profile->person->name->{'given-names'}->value,
+                                          'type' => 'literal'
+                                         ]],
+                     'foaf:familyName' => [['property_id' => $this->propertyMap['foaf:familyName'],
+                                           '@value' => $profile->person->name->{'family-name'}->value,
+                                           'type' => 'literal'
+                                          ]],
+          ];
+        return $itemJson;
+        
+        
+    }
+
+    protected function preparePropertyMap()
+    {
+        $api = $this->api();
+        $this->propertyMap = [
+            'dcterms:description'   => $api->search('properties', ['term' => 'dcterms:description'])->getContent()[0]->id(),
+            'foaf:givenName'        => $api->search('properties', ['term' => 'foaf:givenName'])->getContent()[0]->id(),
+            'foaf:familyName'       => $api->search('properties', ['term' => 'foaf:familyName'])->getContent()[0]->id(),
+            
+        ];
     }
 }

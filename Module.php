@@ -55,7 +55,7 @@ class Module extends AbstractModule
                ";
         $connection->exec($sql);
     }
-    
+
     public function uninstall(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');

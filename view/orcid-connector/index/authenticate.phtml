@@ -6,6 +6,13 @@ if (isset($code)) {
 
 
 
-var_dump($profile);
-var_dump($oauth);
+echo $profile->person->name->{'given-names'}->value;
+
+
+
+//var_dump($oauth);
 ?>
+<pre>
+<?php print_r($itemJson); ?>
+
+</pre>
