@@ -97,6 +97,10 @@ $view->setVariable('oauth', $oauth);
                                            '@value' => $profile->person->name->{'family-name'}->value,
                                            'type' => 'literal'
                                           ]],
+                     'foaf:name'       => [['property_id' => $this->propertyMap['foaf:name'],
+                                            '@value' => $profile->person->name->{'given-names'}->value . ' ' . $profile->person->name->{'family-name'}->value,
+                                            'type' => 'literal'
+                                          ]],
           ];
         return $itemJson;
         
@@ -110,7 +114,7 @@ $view->setVariable('oauth', $oauth);
             'dcterms:description'   => $api->search('properties', ['term' => 'dcterms:description'])->getContent()[0]->id(),
             'foaf:givenName'        => $api->search('properties', ['term' => 'foaf:givenName'])->getContent()[0]->id(),
             'foaf:familyName'       => $api->search('properties', ['term' => 'foaf:familyName'])->getContent()[0]->id(),
-            
+            'foaf:name'             => $api->search('properties', ['term' => 'foaf:name'])->getContent()[0]->id(),
         ];
     }
 }
