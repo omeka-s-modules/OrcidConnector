@@ -54,6 +54,8 @@ class Module extends AbstractModule
                     ALTER TABLE orcid_researcher ADD CONSTRAINT FK_DA7788ACA76ED395 FOREIGN KEY (user_id) REFERENCES user (id);
                ";
         $connection->exec($sql);
+
+        $this->installResourceTemplate();
     }
 
     public function uninstall(ServiceLocatorInterface $serviceLocator)
@@ -167,5 +169,37 @@ class Module extends AbstractModule
         if (isset($data['orcid_sample_client_id'])) {
             $globalSettings->set('orcid_sample_client_id', $data['orcid_sample_client_id']);
         }
+    }
+    
+    protected function installResourceTemplate()
+    {
+        $api = $this->api();
+        $this->preparePropertyMap();
+        $personClass = $api->search('resource_classes', ['term' => 'foaf:Person'])->getContent();
+        $templateJson = [
+            'o:label' => 'Orcid Researcher', // @translate
+            'o:resource_class' => ['o:id' => $personClass[0]->id()],
+            'o:resource_template_property' => [
+                'foaf:name' => [
+                    'o:property' => [
+                        'o:id' => $this->propertyMap['foaf:name'],
+                    ],
+                    'o:alternate_label' => 'Full name' // @translate
+                ],
+                'foaf:givenName' => [
+                    'o:property' => [
+                        'o:id' => $this->propertyMap['foaf:givenName']
+                    ],
+                    'o:alternate_label' => 'Given name' // @translate
+                ],
+                'foaf:familyName' => [
+                    'o:property' => [
+                        'o:id' => $this->propertyMap['foaf:familyName']
+                    ],
+                    'o:alternate_label' => 'Family name' // @translate
+                ],
+            ]
+        ];
+        $response = $api->create('resource_templates', $templateJson);
     }
 }

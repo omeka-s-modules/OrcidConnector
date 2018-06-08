@@ -117,46 +117,4 @@ $view->setVariable('oauth', $oauth);
             'foaf:name'             => $api->search('properties', ['term' => 'foaf:name'])->getContent()[0]->id(),
         ];
     }
-    //@todo move this to Module.php when it works
-    protected function installResourceTemplate()
-    {
-        $api = $this->api();
-        $this->preparePropertyMap();
-        $personClass = $api->search('resource_classes', ['term' => 'foaf:Person'])->getContent();
-        $templateJson = [
-            'o:label' => 'Orcid Researcher', // @translate
-            'o:resource_class' => ['o:id' => $personClass[0]->id()],
-            'o:resource_template_property' => [
-                'foaf:name' => [
-                    'o:property' => [
-                        'o:id' => $this->propertyMap['foaf:name'],
-                    ],
-                    'o:alternate_label' => 'Full name' // @translate
-                ],
-                'foaf:givenName' => [
-                    'o:property' => [
-                        'o:id' => $this->propertyMap['foaf:givenName']
-                    ],
-                    'o:alternate_label' => 'Given name' // @translate
-                ],
-                'foaf:familyName' => [
-                    'o:property' => [
-                        'o:id' => $this->propertyMap['foaf:familyName']
-                    ],
-                    'o:alternate_label' => 'Family name' // @translate
-                ],
-            ]
-        ];
-        print_r($templateJson);
-        $response = $api->create('resource_templates', $templateJson);
-        die();
-/*
-        $resourceTemplateId = $api->create('resource_templates', $templateJson)->getContent()->id();
-        foreach ($templateJson['o:resource_template_property'] as $propertyJson) {
-            $propertyJson['o:resource_template_id'] = $resourceTemplateId;
-            $api->create('resource_template_property', $propertyJson);
-        }
-*/        
-        //die();
-    }
 }
