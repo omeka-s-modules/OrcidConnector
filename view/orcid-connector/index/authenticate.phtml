@@ -13,6 +13,13 @@ echo $profile->person->name->{'given-names'}->value;
 //var_dump($oauth);
 ?>
 <pre>
-<?php print_r($itemJson); ?>
+<?php //print_r($itemJson); ?>
+<?php 
+if ($researcher) {
+    echo $researcher->orcidId();
+} else {
+    echo "NO RESEARCHER FOR YOU!";
+}
 
+?>
 </pre>

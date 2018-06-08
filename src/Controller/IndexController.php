@@ -19,8 +19,11 @@ class IndexController extends AbstractActionController
 
     public function authenticateAction()
     {
-        //$api = $this->getServiceLocator()->get('Omeka\ApiManager');
+        $api = $this->api();
+        $researcherResponse = $api->search('orcid_researchers', ['user_id' => $this->identity()->getId()]);
+        $researcher = $researcherResponse ? $researcherResponse->getContent()[0] : false;
         $view = new ViewModel;
+        $view->setVariable('researcher', $researcher);
         $code = $this->params()->fromQuery('code', false);
         if ($code) {
             $oauth = new Oauth;
@@ -55,17 +58,16 @@ $view->setVariable('oauth', $oauth);
             $orcidResearcherJson = [
                 'orcid_id'       => $oauth->getOrcid(),
                 'person_item'    => null,
-                'o:user'        => ['o:id' => $this->identity()->getId()],
+                'user_id'        => $this->identity()->getId(),
                 'access_token'   => $oauth->getAccessToken(),
             ];
 
-            $response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
+            //$response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
             $this->preparePropertyMap();
             $itemJson = $this->buildItemJson($oauth, $profile);
             $view->setVariable('itemJson', $itemJson);
-            $this->api()->create('items', $itemJson);
-            
-            $this->installResourceTemplate();
+            $api->create('items', $itemJson);
+
         }
         return $view;
     }

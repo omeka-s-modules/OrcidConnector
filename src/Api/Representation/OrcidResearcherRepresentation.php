@@ -34,5 +34,10 @@ class OrcidResearcherRepresentation extends AbstractEntityRepresentation
     {
         return $this->getAdapter('item')->getRepresentation($this->resource->getPersonItem());
     }
+    
+    public function orcidId()
+    {
+        return $this->resource->getOrcidId();
+    }
 
 }
