@@ -117,11 +117,10 @@ class Module extends AbstractModule
 
         $api = $this->serviceLocator->get('Omeka\ApiManager');
         $identity = $this->serviceLocator->get('Omeka\AuthenticationService')->getIdentity();
-        $researcherResponse = $api->search('orcid_researchers', ['user_id' => $identity->getId()]);
-        $researcher = $researcherResponse ? $researcherResponse->getContent()[0] : false;
-
         $user = $view->get('user');
-        
+        $researcherResponse = $api->search('orcid_researchers', ['user_id' => $user->id()])->getContent();
+        $researcher = empty($researcherResponse) ? false : $researcherResponse[0];
+
         echo $view->partial('orcid-connector/admin/orcid',
             [
                 'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
@@ -130,7 +129,7 @@ class Module extends AbstractModule
                 'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
                 'orcid_researcher'       => $researcher,
                 'user' => $user,
-                'identify' => $identity,
+                'identity' => $identity,
             ]
         );
     }

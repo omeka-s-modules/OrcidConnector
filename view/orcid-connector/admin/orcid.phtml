@@ -23,7 +23,7 @@ $orcid_redirect_uri;
     <p><?php echo $this->translate('Only the ORCID iD owner may update data.')?></p>
     <?php endif; ?>
 <?php else: ?>
-    <?php if ($user->id() === $identity->id()) :?>
+    <?php if ($user->id() === $identity->getId()) :?>
     <a id="connect-orcid-link" href="<?php echo $orcidConnectLink; ?>">
         <img id="orcid-id-logo" src="https://orcid.org/sites/default/files/images/orcid_16x16.png" width='16' height='16' alt="ORCID logo"/>
         <?php echo $this->translate('Create or Connect your ORCID iD'); ?>
