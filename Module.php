@@ -107,18 +107,30 @@ class Module extends AbstractModule
         $sectionNav = $event->getParam('section_nav');
         $sectionNav['orcid_data'] = 'ORCID data';
         $event->setParam('section_nav', $sectionNav);
+        $view = $event->getTarget();
     }
 
     public function orcidForm($event)
     {
         $view = $event->getTarget();
         $globals = $this->getServiceLocator()->get('Omeka\Settings');
+
+        $api = $this->serviceLocator->get('Omeka\ApiManager');
+        $identity = $this->serviceLocator->get('Omeka\AuthenticationService')->getIdentity();
+        $researcherResponse = $api->search('orcid_researchers', ['user_id' => $identity->getId()]);
+        $researcher = $researcherResponse ? $researcherResponse->getContent()[0] : false;
+
+        $user = $view->get('user');
+        
         echo $view->partial('orcid-connector/admin/orcid',
             [
                 'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
                 'orcid_client_id'     => $globals->get('orcid_client_id', ''),
                 'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
                 'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
+                'orcid_researcher'       => $researcher,
+                'user' => $user,
+                'identify' => $identity,
             ]
         );
     }

@@ -34,27 +34,11 @@ $oauth->useSandboxEnvironment();
             $oauth->setClientSecret($this->orcidClientSecret);
             $oauth->setRedirectUri($this->orcidRedirectUri);
             $oauth->authenticate($code);
-// dev/testing
-$serializedOauth = serialize($oauth);
-file_put_contents('/var/www/html/omekas/modules/OrcidConnector/dev/oauth.php', $serializedOauth);
-$profile = $oauth->getProfile();
-
-$serializedProfile = serialize($profile);
-file_put_contents('/var/www/html/omekas/modules/OrcidConnector/dev/profile.php', $serializedProfile);
-
-
-
-$view->setVariable('profile', $profile);
-$view->setVariable('oauth', $oauth);
-//
             $view->setVariable('code', $code);
-        } else {
-            $serializedOauth = file_get_contents('/var/www/html/omekas/modules/OrcidConnector/dev/oauth.php');
-            $oauth = unserialize($serializedOauth);
-            $serializedProfile = file_get_contents('/var/www/html/omekas/modules/OrcidConnector/dev/profile.php');
-            $profile = unserialize($serializedProfile);
             $view->setVariable('profile', $profile);
             $view->setVariable('oauth', $oauth);
+        } else {
+
             $orcidResearcherJson = [
                 'orcid_id'       => $oauth->getOrcid(),
                 'person_item'    => null,
@@ -64,7 +48,7 @@ $view->setVariable('oauth', $oauth);
 
             //$response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
             $this->preparePropertyMap();
-            $itemJson = $this->buildItemJson($oauth, $profile);
+            //$itemJson = $this->buildItemJson($oauth, $profile);
             $view->setVariable('itemJson', $itemJson);
             $api->create('items', $itemJson);
 
