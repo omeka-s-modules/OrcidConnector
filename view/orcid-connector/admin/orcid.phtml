@@ -14,11 +14,14 @@ $orcid_redirect_uri;
 <fieldset id='orcid_data' class='section'>
 
 <?php if ($orcid_researcher): ?>
-    <div>
-    <?php
-    $researcherItem = $orcid_researcher->item();
-    echo $researcherItem->displayValues();
-    ?>
+    
+    <div class="show">
+        <div>
+        <?php
+        $researcherItem = $orcid_researcher->item();
+        echo $researcherItem->displayValues();
+        ?>
+        </div>
     </div>
     <?php if ($user->id() === $orcid_researcher->id()) : ?>
     <a id="connect-orcid-link" class="button" href="">
