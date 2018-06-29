@@ -97,7 +97,7 @@ class OrcidResearcher extends AbstractEntity
     
     public function getPersonItem()
     {
-        return $this->item;
+        return $this->personItem;
     }
     
     public function setAccessToken($accessToken)
