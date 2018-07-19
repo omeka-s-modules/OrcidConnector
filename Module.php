@@ -4,6 +4,8 @@ namespace OrcidConnector;
 
 use Omeka\Module\AbstractModule;
 use OrcidConnector\Form\ConfigForm;
+use EasyRdf_Graph;
+use EasyRdf_Http_Client;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\Controller\AbstractController;
@@ -94,6 +96,24 @@ class Module extends AbstractModule
             'view.edit.before',
             [$this, 'orcidAssets']
             );
+        /*
+        $sharedEventManager->attach(
+            'Omeka\Controller\Admin\User',
+            'view.edit.before',
+            [$this, 'appendOrcidData']
+            );
+        */
+        $sharedEventManager->attach(
+            'Omeka\Controller\Admin\Item',
+            'view.show.after',
+            [$this, 'appendOrcidData']
+            );
+        
+        $sharedEventManager->attach(
+            'Omeka\Controller\Item',
+            'view.show.after',
+            [$this, 'appendOrcidData']
+            );
     }
 
     public function orcidAssets($event)
@@ -120,7 +140,7 @@ class Module extends AbstractModule
         $user = $view->get('user');
         $researcherResponse = $api->search('orcid_researchers', ['user_id' => $user->id()])->getContent();
         $researcher = empty($researcherResponse) ? false : $researcherResponse[0];
-
+        $orcidRdfHtml = $this->renderRdf('');
         echo $view->partial('orcid-connector/admin/orcid',
             [
                 'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
@@ -130,6 +150,7 @@ class Module extends AbstractModule
                 'orcid_researcher'       => $researcher,
                 'user' => $user,
                 'identity' => $identity,
+                'orcidRdfHtml' => $orcidRdfHtml,
             ]
         );
     }
@@ -182,6 +203,22 @@ class Module extends AbstractModule
         }
     }
     
+    public function appendOrcidData($event)
+    {
+        $view = $event->getTarget();
+        $api = $this->serviceLocator->get('Omeka\ApiManager');
+        $item = $view->get('item');
+        //$itemId = $item->id();
+        
+        //dig up ORCID iD based on the Item
+        //$orcidResearcher = $api->search('OrcidResearcher', ['item_id' => $itemId])->response()[0];
+        //$orcidId = $orcidResearcher->orcid_id();
+       // $orcidRdf = $this->fetchOrcidData($orcidId);
+        $orcidRdf = '';
+        $html = $this->renderRdf($orcidRdf);
+        echo $html;
+    }
+    
     protected function installResourceTemplate()
     {
         $api = $this->api();
@@ -212,5 +249,28 @@ class Module extends AbstractModule
             ]
         ];
         $response = $api->create('resource_templates', $templateJson);
+    }
+    
+    protected function fetchOrcidData($orcidId)
+    {
+        // request setup adapted from 
+        // https://groups.google.com/d/msg/easyrdf/jLcGkfZ9gzs/p6pvgKxoJlYJ
+        $url = "https://orcid.org/$orcidId";
+        $url = "https://sandbox.orcid.org/$orcidId";
+        $request = new EasyRdf_Http_Client();
+        $request->setUri($url);
+        $request->setHeaders("Accept", "application/ld+json");
+        $response = $request->request();
+        var_dump($response);
+        
+        $graph = new EasyRdf_Graph();
+        
+        return $graph;
+    }
+    
+    protected function renderRdf($graph)
+    {
+        $html = 'RDF to html goes here.';
+        return $html;
     }
 }
