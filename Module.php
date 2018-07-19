@@ -140,7 +140,10 @@ class Module extends AbstractModule
         $user = $view->get('user');
         $researcherResponse = $api->search('orcid_researchers', ['user_id' => $user->id()])->getContent();
         $researcher = empty($researcherResponse) ? false : $researcherResponse[0];
-        $orcidRdfHtml = $this->renderRdf('');
+        $orcidId = $researcher->orcidId();
+        $graph = $this->fetchOrcidData($orcidId);
+        
+        $orcidRdfHtml = $this->renderRdf($graph);
         echo $view->partial('orcid-connector/admin/orcid',
             [
                 'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
@@ -261,16 +264,19 @@ class Module extends AbstractModule
         $request->setUri($url);
         $request->setHeaders("Accept", "application/ld+json");
         $response = $request->request();
-        var_dump($response);
+        $responseBody = $response->getBody();
+        echo $orcidId;
+        var_dump($responseBody);
         
         $graph = new EasyRdf_Graph();
-        
+        $graph->parse($responseBody, 'jsonld');
         return $graph;
     }
     
     protected function renderRdf($graph)
     {
         $html = 'RDF to html goes here.';
+        $html .= $graph->dump();
         return $html;
     }
 }
