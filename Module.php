@@ -142,8 +142,9 @@ class Module extends AbstractModule
         $researcher = empty($researcherResponse) ? false : $researcherResponse[0];
         $orcidId = $researcher->orcidId();
         $graph = $this->fetchOrcidData($orcidId);
-        
-        $orcidRdfHtml = $this->renderRdf($graph);
+        $orcidId = '0000-0003-0902-4386';
+
+        $orcidRdfHtml = $this->renderRdf($graph, $orcidId);
         echo $view->partial('orcid-connector/admin/orcid',
             [
                 'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
@@ -258,25 +259,70 @@ class Module extends AbstractModule
     {
         // request setup adapted from 
         // https://groups.google.com/d/msg/easyrdf/jLcGkfZ9gzs/p6pvgKxoJlYJ
-        $url = "https://orcid.org/$orcidId";
-        $url = "https://sandbox.orcid.org/$orcidId";
+        
+        $orcidId = '0000-0003-0902-4386';
+        $uri = "https://orcid.org/$orcidId";
+        //$uri = "https://sandbox.orcid.org/$orcidId";
         $request = new EasyRdf_Http_Client();
-        $request->setUri($url);
+        $request->setUri($uri);
         $request->setHeaders("Accept", "application/ld+json");
         $response = $request->request();
         $responseBody = $response->getBody();
         echo $orcidId;
-        var_dump($responseBody);
+        //var_dump($responseBody);
         
         $graph = new EasyRdf_Graph();
+        // @TODO network conditions make the parsing of schema.org fluctuate
+        // partly, I guess, because it's so big. need error handling and/or
+        // longer response time allowance
         $graph->parse($responseBody, 'jsonld');
         return $graph;
     }
     
-    protected function renderRdf($graph)
+    protected function renderRdf($graph, $orcidId)
     {
         $html = 'RDF to html goes here.';
-        $html .= $graph->dump();
+        
+        // Grab only the desired data. Sad that it's hard-coded, but everything is
+        // hard to manage.
+        
+        
+        $orcidId = '0000-0003-0902-4386';
+        $uri = "http://orcid.org/$orcidId";
+        //$uri = "https://sandbox.orcid.org/$orcidId";
+        //$html .= $graph->dump();
+        
+        $reverses = $graph->reversePropertyUris($uri);
+        
+        $propertyValuesToRender = [
+            'http://schema.org/creator' =>
+                'Creator', // @translate
+            'http://schema.org/funder'  =>
+                'Funded by', // @translate
+        ];
+        //$html = "<pre>" . print_r($reverses, true) . "</pre>";
+        $html = "";
+        $objects = [];
+        foreach ($reverses as $property) {
+            if (array_key_exists($property, $propertyValuesToRender)) {
+                $reverseResources = $graph->resourcesMatching("$property");
+                //$html .= "<pre>" . print_r($reverseResources, true) . "</pre>";
+                foreach ($reverseResources as $reverseResource) {
+                    $html .= "<p>" . $reverseResource->getLiteral("schema:name")->getValue() . "</p>";
+                }
+                
+                /*
+                $html .= "<p>to render $property</p>";
+                $objectsForProperty = $graph->allResources($uri, $property);
+                $html .= "<pre>" . print_r($objectsForProperty, true) . "</pre>";
+                */
+            }
+        }
+        
+
+        
+        
+//        $html = "<pre>" . print_r($reverses, true) . "</pre>";
         return $html;
     }
 }
