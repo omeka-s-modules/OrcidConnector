@@ -34,7 +34,7 @@ class Module extends AbstractModule
     {
         return include __DIR__.'/config/module.config.php';
     }
-    
+
     public function install(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
@@ -108,7 +108,7 @@ class Module extends AbstractModule
             'view.show.after',
             [$this, 'appendOrcidData']
             );
-        
+
         $sharedEventManager->attach(
             'Omeka\Controller\Item',
             'view.show.after',
@@ -201,19 +201,19 @@ class Module extends AbstractModule
         if (isset($data['orcid_client_secret'])) {
             $globalSettings->set('orcid_client_secret', $data['orcid_client_secret']);
         }
-        
+
         if (isset($data['orcid_sample_client_id'])) {
             $globalSettings->set('orcid_sample_client_id', $data['orcid_sample_client_id']);
         }
     }
-    
+
     public function appendOrcidData($event)
     {
         $view = $event->getTarget();
         $api = $this->serviceLocator->get('Omeka\ApiManager');
         $item = $view->get('item');
         //$itemId = $item->id();
-        
+
         //dig up ORCID iD based on the Item
         //$orcidResearcher = $api->search('OrcidResearcher', ['item_id' => $itemId])->response()[0];
         //$orcidId = $orcidResearcher->orcid_id();
@@ -222,7 +222,7 @@ class Module extends AbstractModule
         $html = $this->renderRdf($orcidRdf);
         echo $html;
     }
-    
+
     protected function installResourceTemplate()
     {
         $api = $this->api();
@@ -269,7 +269,6 @@ class Module extends AbstractModule
         $response = $request->request();
         $responseBody = $response->getBody();
         echo $orcidId;
-        //var_dump($responseBody);
         
         $graph = new EasyRdf_Graph();
         // @TODO network conditions make the parsing of schema.org fluctuate
@@ -282,47 +281,34 @@ class Module extends AbstractModule
     protected function renderRdf($graph, $orcidId)
     {
         $html = 'RDF to html goes here.';
-        
         // Grab only the desired data. Sad that it's hard-coded, but everything is
         // hard to manage.
-        
-        
         $orcidId = '0000-0003-0902-4386';
         $uri = "http://orcid.org/$orcidId";
         //$uri = "https://sandbox.orcid.org/$orcidId";
-        //$html .= $graph->dump();
-        
+
         $reverses = $graph->reversePropertyUris($uri);
-        
+
         $propertyValuesToRender = [
             'http://schema.org/creator' =>
                 'Creator', // @translate
             'http://schema.org/funder'  =>
                 'Funded by', // @translate
         ];
-        //$html = "<pre>" . print_r($reverses, true) . "</pre>";
         $html = "";
         $objects = [];
         foreach ($reverses as $property) {
             if (array_key_exists($property, $propertyValuesToRender)) {
                 $reverseResources = $graph->resourcesMatching("$property");
+                $html .= "<div class='property'>";
+                $html .= "<h4>" . $propertyValuesToRender[$property] . "</h4>";
                 //$html .= "<pre>" . print_r($reverseResources, true) . "</pre>";
                 foreach ($reverseResources as $reverseResource) {
-                    $html .= "<p>" . $reverseResource->getLiteral("schema:name")->getValue() . "</p>";
+                    $html .= "<div class='values'>" . $reverseResource->getLiteral("schema:name")->getValue() . "</div>";
                 }
-                
-                /*
-                $html .= "<p>to render $property</p>";
-                $objectsForProperty = $graph->allResources($uri, $property);
-                $html .= "<pre>" . print_r($objectsForProperty, true) . "</pre>";
-                */
+                $html .= "</div>";
             }
         }
-        
-
-        
-        
-//        $html = "<pre>" . print_r($reverses, true) . "</pre>";
         return $html;
     }
 }
