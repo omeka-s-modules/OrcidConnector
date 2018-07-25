@@ -28,7 +28,7 @@ class IndexController extends AbstractActionController
         if ($code) {
             $oauth = new Oauth;
 // for dev only
-$oauth->useSandboxEnvironment();
+// $oauth->useSandboxEnvironment();
 //
             $oauth->setClientId($this->orcidClientId);
             $oauth->setClientSecret($this->orcidClientSecret);

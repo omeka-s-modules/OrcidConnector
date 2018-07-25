@@ -25,10 +25,7 @@ $orcid_redirect_uri;
         <?php echo $orcidRdfHtml; ?>
     </div>
     <?php if ($user->id() === $orcid_researcher->id()) : ?>
-    <a id="connect-orcid-link" class="button" href="">
-        <img id="orcid-id-logo" src="https://orcid.org/sites/default/files/images/orcid_16x16.png" width='16' height='16' alt="ORCID logo"/>
-        <?php echo $this->translate('Update your data from your ORCID profile.'); ?>
-    </a>
+
     <?php else: ?>
     <p><?php echo $this->translate('Only the ORCID iD owner may update data.'); ?></p>
     <?php endif; ?>

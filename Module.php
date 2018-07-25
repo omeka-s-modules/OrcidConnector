@@ -260,16 +260,12 @@ class Module extends AbstractModule
         // request setup adapted from 
         // https://groups.google.com/d/msg/easyrdf/jLcGkfZ9gzs/p6pvgKxoJlYJ
         
-        $orcidId = '0000-0003-0902-4386';
         $uri = "https://orcid.org/$orcidId";
-        //$uri = "https://sandbox.orcid.org/$orcidId";
         $request = new EasyRdf_Http_Client();
         $request->setUri($uri);
         $request->setHeaders("Accept", "application/ld+json");
         $response = $request->request();
         $responseBody = $response->getBody();
-        echo $orcidId;
-        
         $graph = new EasyRdf_Graph();
         // @TODO network conditions make the parsing of schema.org fluctuate
         // partly, I guess, because it's so big. need error handling and/or
@@ -280,12 +276,9 @@ class Module extends AbstractModule
     
     protected function renderRdf($graph, $orcidId)
     {
-        $html = 'RDF to html goes here.';
         // Grab only the desired data. Sad that it's hard-coded, but everything is
         // hard to manage.
-        $orcidId = '0000-0003-0902-4386';
         $uri = "http://orcid.org/$orcidId";
-        //$uri = "https://sandbox.orcid.org/$orcidId";
 
         $reverses = $graph->reversePropertyUris($uri);
 
@@ -296,13 +289,27 @@ class Module extends AbstractModule
                 'Funded by', // @translate
         ];
         $html = "";
-        $objects = [];
+        
+        // It is annoying that Easy(!)Rdf uses "reverse", from JsonLD. A real SPARQL query would have been
+        // so much easier.
+        
+        foreach ($directs as $directProperty) {
+            if (array_key_exists($directProperty, $propertyValuesToRender)) {
+                $directResources = $graph->resourcesMatching("$property");
+                $html .= "<div class='property'>";
+                $html .= "<h4>" . $propertyValuesToRender[$property] . "</h4>";
+                foreach ($directResources as $directResource) {
+                    $html .= "<div class='values'>" . $directResource->getLiteral("schema:name")->getValue() . "</div>";
+                }
+                $html .= "</div>";
+            }
+        }
+        
         foreach ($reverses as $property) {
             if (array_key_exists($property, $propertyValuesToRender)) {
                 $reverseResources = $graph->resourcesMatching("$property");
                 $html .= "<div class='property'>";
                 $html .= "<h4>" . $propertyValuesToRender[$property] . "</h4>";
-                //$html .= "<pre>" . print_r($reverseResources, true) . "</pre>";
                 foreach ($reverseResources as $reverseResource) {
                     $html .= "<div class='values'>" . $reverseResource->getLiteral("schema:name")->getValue() . "</div>";
                 }
