@@ -142,7 +142,7 @@ class Module extends AbstractModule
         $researcher = empty($researcherResponse) ? false : $researcherResponse[0];
         $orcidId = $researcher->orcidId();
         $graph = $this->fetchOrcidData($orcidId);
-        $orcidId = '0000-0003-0902-4386';
+        //$orcidId = '0000-0003-0902-4386';
 
         $orcidRdfHtml = $this->renderRdf($graph, $orcidId);
         echo $view->partial('orcid-connector/admin/orcid',
@@ -212,14 +212,13 @@ class Module extends AbstractModule
         $view = $event->getTarget();
         $api = $this->serviceLocator->get('Omeka\ApiManager');
         $item = $view->get('item');
-        //$itemId = $item->id();
+        $itemId = $item->id();
 
-        //dig up ORCID iD based on the Item
-        //$orcidResearcher = $api->search('OrcidResearcher', ['item_id' => $itemId])->response()[0];
-        //$orcidId = $orcidResearcher->orcid_id();
-       // $orcidRdf = $this->fetchOrcidData($orcidId);
-        $orcidRdf = '';
-        $html = $this->renderRdf($orcidRdf);
+        // dig up ORCID iD based on the Item
+        $orcidResearcher = $api->search('orcid_researchers', ['person_item_id' => $itemId])->getContent()[0];
+        $orcidId = $orcidResearcher->orcidId();
+        $orcidGraph = $this->fetchOrcidData($orcidId);
+        $html = $this->renderRdf($orcidGraph, $orcidId);
         echo $html;
     }
 
@@ -259,8 +258,9 @@ class Module extends AbstractModule
     {
         // request setup adapted from 
         // https://groups.google.com/d/msg/easyrdf/jLcGkfZ9gzs/p6pvgKxoJlYJ
-        
-        $uri = "https://orcid.org/$orcidId";
+        //$orcidId = '0000-0003-0902-4386';
+        $uri = "http://orcid.org/$orcidId";
+        $uri = "https://sandbox.orcid.org/$orcidId";
         $request = new EasyRdf_Http_Client();
         $request->setUri($uri);
         $request->setHeaders("Accept", "application/ld+json");
@@ -279,7 +279,7 @@ class Module extends AbstractModule
         // Grab only the desired data. Sad that it's hard-coded, but everything is
         // hard to manage.
         $uri = "http://orcid.org/$orcidId";
-
+        $uri = "http://sandbox.orcid.org/$orcidId";
         $reverses = $graph->reversePropertyUris($uri);
 
         $propertyValuesToRender = [
@@ -288,11 +288,10 @@ class Module extends AbstractModule
             'http://schema.org/funder'  =>
                 'Funded by', // @translate
         ];
-        $html = "";
+        $html = "$orcidId";
         
-        // It is annoying that Easy(!)Rdf uses "reverse", from JsonLD. A real SPARQL query would have been
-        // so much easier.
         
+        /*
         foreach ($directs as $directProperty) {
             if (array_key_exists($directProperty, $propertyValuesToRender)) {
                 $directResources = $graph->resourcesMatching("$property");
@@ -304,6 +303,10 @@ class Module extends AbstractModule
                 $html .= "</div>";
             }
         }
+        */
+        // It is annoying that Easy(!)Rdf uses "reverse", from JsonLD. A real SPARQL query would have been
+        // so much easier.
+
         
         foreach ($reverses as $property) {
             if (array_key_exists($property, $propertyValuesToRender)) {
