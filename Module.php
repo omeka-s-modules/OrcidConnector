@@ -57,7 +57,7 @@ class Module extends AbstractModule
                ";
         $connection->exec($sql);
 
-        $this->installResourceTemplate();
+        $this->installResourceTemplate($serviceLocator);
     }
 
     public function uninstall(ServiceLocatorInterface $serviceLocator)
@@ -135,28 +135,46 @@ class Module extends AbstractModule
         $view = $event->getTarget();
         $globals = $this->getServiceLocator()->get('Omeka\Settings');
 
-        $api = $this->serviceLocator->get('Omeka\ApiManager');
+        $api = $this->getServiceLocator()->get('Omeka\ApiManager');
         $identity = $this->serviceLocator->get('Omeka\AuthenticationService')->getIdentity();
         $user = $view->get('user');
         $researcherResponse = $api->search('orcid_researchers', ['user_id' => $user->id()])->getContent();
         $researcher = empty($researcherResponse) ? false : $researcherResponse[0];
-        $orcidId = $researcher->orcidId();
-        $graph = $this->fetchOrcidData($orcidId);
-        //$orcidId = '0000-0003-0902-4386';
-
-        $orcidRdfHtml = $this->renderRdf($graph, $orcidId);
-        echo $view->partial('orcid-connector/admin/orcid',
-            [
-                'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
-                'orcid_client_id'     => $globals->get('orcid_client_id', ''),
-                'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
-                'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
-                'orcid_researcher'       => $researcher,
-                'user' => $user,
-                'identity' => $identity,
-                'orcidRdfHtml' => $orcidRdfHtml,
-            ]
-        );
+        if ($researcher) {
+            $orcidId = $researcher->orcidId();
+            $graph = $this->fetchOrcidData($orcidId);
+            if ($graph) {
+                //$orcidId = '0000-0003-0902-4386';
+        
+                $orcidRdfHtml = $this->renderRdf($graph, $orcidId);
+                echo $view->partial('orcid-connector/admin/orcid',
+                    [
+                        'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
+                        'orcid_client_id'     => $globals->get('orcid_client_id', ''),
+                        'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
+                        'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
+                        'orcid_researcher'       => $researcher,
+                        'user' => $user,
+                        'identity' => $identity,
+                        'orcidRdfHtml' => $orcidRdfHtml,
+                    ]
+                );
+            } else {
+                echo "A problem occured gathering data from ORCID. Please reload the page."; // @translate
+            }
+        } else {
+            echo $view->partial('orcid-connector/admin/orcid',
+                [
+                    'orcid_redirect_uri'  => $globals->get('orcid_redirect_uri', ''),
+                    'orcid_client_id'     => $globals->get('orcid_client_id', ''),
+                    'orcid_client_secret' => $globals->get('orcid_client_secret', ''),
+                    'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
+                    'user' => $user,
+                    'identity' => $identity,
+                ]
+                );
+            $propertyMap = $this->preparePropertyMap($api);
+        }
     }
 
     /**
@@ -174,7 +192,6 @@ class Module extends AbstractModule
             'orcid_redirect_uri'     => $globals->get('orcid_redirect_uri', ''),
             'orcid_client_id'        => $globals->get('orcid_client_id', ''),
             'orcid_client_secret'    => $globals->get('orcid_client_secret', ''),
-            'orcid_sample_client_id' => $globals->get('orcid_sample_client_id', ''),
         ]);
         $html = $renderer->formCollection($form);
         return $html;
@@ -222,10 +239,10 @@ class Module extends AbstractModule
         echo $html;
     }
 
-    protected function installResourceTemplate()
+    protected function installResourceTemplate($serviceLocator)
     {
-        $api = $this->api();
-        $this->preparePropertyMap();
+        $api = $serviceLocator->get('Omeka\ApiManager');
+        $propertyMap = $this->preparePropertyMap($api);
         $personClass = $api->search('resource_classes', ['term' => 'foaf:Person'])->getContent();
         $templateJson = [
             'o:label' => 'Orcid Researcher', // @translate
@@ -233,19 +250,19 @@ class Module extends AbstractModule
             'o:resource_template_property' => [
                 'foaf:name' => [
                     'o:property' => [
-                        'o:id' => $this->propertyMap['foaf:name'],
+                        'o:id' => $propertyMap['foaf:name'],
                     ],
                     'o:alternate_label' => 'Full name' // @translate
                 ],
                 'foaf:givenName' => [
                     'o:property' => [
-                        'o:id' => $this->propertyMap['foaf:givenName']
+                        'o:id' => $propertyMap['foaf:givenName']
                     ],
                     'o:alternate_label' => 'Given name' // @translate
                 ],
                 'foaf:familyName' => [
                     'o:property' => [
-                        'o:id' => $this->propertyMap['foaf:familyName']
+                        'o:id' => $propertyMap['foaf:familyName']
                     ],
                     'o:alternate_label' => 'Family name' // @translate
                 ],
@@ -258,52 +275,62 @@ class Module extends AbstractModule
     {
         // request setup adapted from 
         // https://groups.google.com/d/msg/easyrdf/jLcGkfZ9gzs/p6pvgKxoJlYJ
-        //$orcidId = '0000-0003-0902-4386';
+        $orcidId = '0000-0003-0902-4386';
         $uri = "http://orcid.org/$orcidId";
-        $uri = "https://sandbox.orcid.org/$orcidId";
+        //$uri = "https://sandbox.orcid.org/$orcidId";
         $request = new EasyRdf_Http_Client();
         $request->setUri($uri);
         $request->setHeaders("Accept", "application/ld+json");
-        $response = $request->request();
-        $responseBody = $response->getBody();
-        $graph = new EasyRdf_Graph();
-        // @TODO network conditions make the parsing of schema.org fluctuate
-        // partly, I guess, because it's so big. need error handling and/or
-        // longer response time allowance
-        $graph->parse($responseBody, 'jsonld');
-        return $graph;
+        try {
+            $response = $request->request();
+            $responseBody = $response->getBody();
+            $graph = new EasyRdf_Graph();
+            // @TODO network conditions make the parsing of schema.org fluctuate
+            // partly, I guess, because it's so big. need error handling and/or
+            // longer response time allowance
+            $graph->parse($responseBody, 'jsonld');
+            return $graph;
+        } catch (\EasyRdf_Exception $e) {
+            return false;
+        }
     }
     
     protected function renderRdf($graph, $orcidId)
     {
         // Grab only the desired data. Sad that it's hard-coded, but everything is
         // hard to manage.
+        $orcidId = '0000-0003-0902-4386';
         $uri = "http://orcid.org/$orcidId";
-        $uri = "http://sandbox.orcid.org/$orcidId";
+        //$uri = "http://sandbox.orcid.org/$orcidId";
         $reverses = $graph->reversePropertyUris($uri);
+        $directs = $graph->propertyUris($uri);
 
         $propertyValuesToRender = [
             'http://schema.org/creator' =>
                 'Creator', // @translate
             'http://schema.org/funder'  =>
                 'Funded by', // @translate
+            'http://schema.org/affiliation'  =>
+                'Affiliation', // @translate
+            'http://schema.org/alumniOf'  =>
+                'Alumni of', // @translate
+                
         ];
-        $html = "$orcidId";
-        
-        
-        /*
+        $html = '';
+
         foreach ($directs as $directProperty) {
             if (array_key_exists($directProperty, $propertyValuesToRender)) {
-                $directResources = $graph->resourcesMatching("$property");
                 $html .= "<div class='property'>";
-                $html .= "<h4>" . $propertyValuesToRender[$property] . "</h4>";
+                $html .= "<h4>" . $propertyValuesToRender[$directProperty] . "</h4>";
+                $directResources = $graph->all("$uri", "<$directProperty>");
                 foreach ($directResources as $directResource) {
                     $html .= "<div class='values'>" . $directResource->getLiteral("schema:name")->getValue() . "</div>";
                 }
                 $html .= "</div>";
             }
         }
-        */
+
+        
         // It is annoying that Easy(!)Rdf uses "reverse", from JsonLD. A real SPARQL query would have been
         // so much easier.
 
@@ -320,5 +347,20 @@ class Module extends AbstractModule
             }
         }
         return $html;
+    }
+    
+    protected function preparePropertyMap($api)
+    {
+        $propertyMap = [];
+        $propertyMap['foaf:name'] = $api->search('properties',
+            ['term' => 'foaf:name'])
+            ->getContent()[0]->id();
+        $propertyMap['foaf:givenName'] = $api->search('properties',
+            ['term' => 'foaf:givenName'])
+            ->getContent()[0]->id();
+        $propertyMap['foaf:familyName'] = $api->search('properties',
+            ['term' => 'foaf:familyName'])
+            ->getContent()[0]->id();
+        return $propertyMap;
     }
 }

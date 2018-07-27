@@ -15,20 +15,6 @@ class ConfigForm extends Form
 
     public function init()
     {
-        /*
-        $this->add([
-            'type' => '',
-            'name' => '',
-            'attributes' => [
-                'value' => '',
-            ],
-            'options' => [
-                'label' => '',
-                'info' => '',
-            ],
-
-        ]);
-        */
         $this->add([
             'type' => 'text',
             'name' => 'orcid_redirect_uri',
@@ -64,18 +50,6 @@ class ConfigForm extends Form
                 'info' => 'The secret code ORCID gave you when registering', // @translate
             ],
 
-        ]);
-
-        $this->add([
-            'type' => 'text',
-            'name' => 'orcid_sample_client_id',
-            'attributes' => [
-                'value' => $this->orcidSampleClientId,
-            ],
-            'options' => [
-                'label' => 'Sample client id',
-                'info' => '',
-            ],
         ]);
     }
 }

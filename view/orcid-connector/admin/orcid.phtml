@@ -13,7 +13,7 @@ $orcid_redirect_uri;
 
 <fieldset id='orcid_data' class='section'>
 
-<?php if ($orcid_researcher): ?>
+<?php if (isset($orcid_researcher)): ?>
     
     <div class="show">
         <div>
@@ -42,6 +42,6 @@ $orcid_redirect_uri;
     
     
     
-    <?php echo $orcidConnectLink; ?>
+    <?php //echo $orcidConnectLink; ?>
 <?php endif; ?>
 </fieldset>

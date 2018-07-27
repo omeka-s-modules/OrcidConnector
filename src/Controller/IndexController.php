@@ -28,7 +28,7 @@ class IndexController extends AbstractActionController
         if ($code) {
             $oauth = new Oauth;
 // for dev only
-// $oauth->useSandboxEnvironment();
+ $oauth->useSandboxEnvironment();
 //
             $oauth->setClientId($this->orcidClientId);
             $oauth->setClientSecret($this->orcidClientSecret);
@@ -39,6 +39,9 @@ class IndexController extends AbstractActionController
             $view->setVariable('oauth', $oauth);
         } else {
 
+            // see if the researcher already exists as an Item
+            
+            
             $orcidResearcherJson = [
                 'orcid_id'       => $oauth->getOrcid(),
                 'person_item'    => null,
@@ -46,9 +49,9 @@ class IndexController extends AbstractActionController
                 'access_token'   => $oauth->getAccessToken(),
             ];
 
-            //$response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
+            $response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
             $this->preparePropertyMap();
-            //$itemJson = $this->buildItemJson($oauth, $profile);
+            $itemJson = $this->buildItemJson($oauth, $profile);
             $view->setVariable('itemJson', $itemJson);
             $api->create('items', $itemJson);
 
