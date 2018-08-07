@@ -207,7 +207,9 @@ class Module extends AbstractModule
     {
         $data = $controller->params()->fromPost();
         $globalSettings = $this->getServiceLocator()->get('Omeka\Settings');
-
+        if (isset($data['orcid_redirect_uri'])) {
+            $globalSettings->set('orcid_redirect_uri', $data['orcid_redirect_uri']);
+        }
         if (isset($data['orcid_client_id'])) {
             $globalSettings->set('orcid_client_id', $data['orcid_client_id']);
         }

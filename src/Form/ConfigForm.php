@@ -18,6 +18,18 @@ class ConfigForm extends Form
 
         $this->add([
             'type' => 'text',
+            'name' => 'orcid_redirect_uri',
+            'attributes' => [
+                'value' => $this->orcidClientId,
+            ],
+            'options' => [
+                'label' => 'Redirect URI', // @translate
+                'info' => 'The redirect URI you have listed with ORCID for your site', // @translate
+            ],
+        ]);
+
+        $this->add([
+            'type' => 'text',
             'name' => 'orcid_client_id',
             'attributes' => [
                 'value' => $this->orcidClientId,
