@@ -19,42 +19,44 @@ class IndexController extends AbstractActionController
 
     public function authenticateAction()
     {
+        $redirectUrl = $this->url()->fromRoute('admin/orcidconnector', [], ['force_canonical' => true]);
         $api = $this->api();
-        $researcherResponse = $api->search('orcid_researchers', ['user_id' => $this->identity()->getId()]);
-        $researcher = $researcherResponse ? $researcherResponse->getContent()[0] : false;
         $view = new ViewModel;
+        $researcherResponse = $api->search('orcid_researchers', ['user_id' => $this->identity()->getId()]);
+
+        if (empty($researcherResponse->getContent())) {
+            $researcher = false;
+        } else {
+            $researcher = $researcherResponse ? $researcherResponse->getContent()[0] : false;
+        }
         $view->setVariable('researcher', $researcher);
         $code = $this->params()->fromQuery('code', false);
         if ($code) {
             $oauth = new Oauth;
 // for dev only
- $oauth->useSandboxEnvironment();
+// $oauth->useSandboxEnvironment();
 //
             $oauth->setClientId($this->orcidClientId);
             $oauth->setClientSecret($this->orcidClientSecret);
-            $oauth->setRedirectUri($this->orcidRedirectUri);
+            $oauth->setRedirectUri($redirectUrl);
             $oauth->authenticate($code);
+            $profile = $oauth->getProfile();
             $view->setVariable('code', $code);
             $view->setVariable('profile', $profile);
             $view->setVariable('oauth', $oauth);
         } else {
-
-            // see if the researcher already exists as an Item
-            
-            
             $orcidResearcherJson = [
                 'orcid_id'       => $oauth->getOrcid(),
-                'person_item'    => null,
+                'person_item_id'    => null,
                 'user_id'        => $this->identity()->getId(),
                 'access_token'   => $oauth->getAccessToken(),
             ];
-
+            $profile = $oauth->getProfile();
             $response = $this->api()->create('orcid_researchers', $orcidResearcherJson);
             $this->preparePropertyMap();
             $itemJson = $this->buildItemJson($oauth, $profile);
             $view->setVariable('itemJson', $itemJson);
             $api->create('items', $itemJson);
-
         }
         return $view;
     }
@@ -78,7 +80,7 @@ class IndexController extends AbstractActionController
     {
         $api = $this->api();
         $personClass = $api->search('resource_classes', ['term' => 'foaf:Person'])->getContent();
-        
+
         $itemJson = ['o:resource_class' => ['o:id' => $personClass[0]->id()],
                      'foaf:givenName' => [['property_id' => $this->propertyMap['foaf:givenName'],
                                           '@value' => $profile->person->name->{'given-names'}->value,

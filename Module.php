@@ -207,9 +207,6 @@ class Module extends AbstractModule
     {
         $data = $controller->params()->fromPost();
         $globalSettings = $this->getServiceLocator()->get('Omeka\Settings');
-        if (isset($data['orcid_redirect_uri'])) {
-            $globalSettings->set('orcid_redirect_uri', $data['orcid_redirect_uri']);
-        }
 
         if (isset($data['orcid_client_id'])) {
             $globalSettings->set('orcid_client_id', $data['orcid_client_id']);
@@ -217,10 +214,6 @@ class Module extends AbstractModule
 
         if (isset($data['orcid_client_secret'])) {
             $globalSettings->set('orcid_client_secret', $data['orcid_client_secret']);
-        }
-
-        if (isset($data['orcid_sample_client_id'])) {
-            $globalSettings->set('orcid_sample_client_id', $data['orcid_sample_client_id']);
         }
     }
 
@@ -275,7 +268,7 @@ class Module extends AbstractModule
     {
         // request setup adapted from 
         // https://groups.google.com/d/msg/easyrdf/jLcGkfZ9gzs/p6pvgKxoJlYJ
-        $orcidId = '0000-0003-0902-4386';
+        // $orcidId = '0000-0003-0902-4386';
         $uri = "http://orcid.org/$orcidId";
         //$uri = "https://sandbox.orcid.org/$orcidId";
         $request = new EasyRdf_Http_Client();
@@ -299,7 +292,7 @@ class Module extends AbstractModule
     {
         // Grab only the desired data. Sad that it's hard-coded, but everything is
         // hard to manage.
-        $orcidId = '0000-0003-0902-4386';
+        // $orcidId = '0000-0003-0902-4386';
         $uri = "http://orcid.org/$orcidId";
         //$uri = "http://sandbox.orcid.org/$orcidId";
         $reverses = $graph->reversePropertyUris($uri);
@@ -330,11 +323,8 @@ class Module extends AbstractModule
             }
         }
 
-        
         // It is annoying that Easy(!)Rdf uses "reverse", from JsonLD. A real SPARQL query would have been
         // so much easier.
-
-        
         foreach ($reverses as $property) {
             if (array_key_exists($property, $propertyValuesToRender)) {
                 $reverseResources = $graph->resourcesMatching("$property");
