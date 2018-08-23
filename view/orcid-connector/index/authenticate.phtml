@@ -1,13 +1,10 @@
 <?php
-
-if (isset($code)) {
-    echo $code;
-}
-
-
-
-echo $profile->person->name->{'given-names'}->value;
+$personItemId = $orcidResearcherJson['person_item_id'];
 ?>
+
+<h3><?php echo $this->translate('Your ORCID iD has been created as an Item in Omeka S'); ?></h3>
+<p><?php echo $this->translate('You should visit your Item page to fill in any additional information, especially
+a Dublin Core Title to display your name correctly.'); ?></p>
 <pre>
 <?php //print_r($itemJson); ?>
 <?php 

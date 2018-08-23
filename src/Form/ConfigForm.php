@@ -24,7 +24,7 @@ class ConfigForm extends Form
             ],
             'options' => [
                 'label' => 'Redirect URI', // @translate
-                'info' => 'The redirect URI you have listed with ORCID for your site', // @translate
+                'info' => 'The redirect URI you have listed with ORCID for your site. Typically, http://{YourDomain}/admin/orcidconnector', // @translate
             ],
         ]);
 
