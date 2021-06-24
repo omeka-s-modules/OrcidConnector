@@ -5,7 +5,7 @@ OrchidConnector is Copyright © 2018-present Corporation for Digital Scholarship
 
 The Corporation for Digital Scholarship distributes the Omeka source code
 under the GNU General Public License, version 3 (GPLv3). The full text
-of this license is given below.
+of this license is given in the license file.
 
 The Omeka name is a registered trademark of the Corporation for Digital Scholarship.
 
